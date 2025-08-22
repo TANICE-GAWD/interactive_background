@@ -4,18 +4,19 @@ function App(conf) {
   conf = {
     fov: 75,
     cameraZ: 75,
-    xyCoef: 50,
-    zCoef: 10,
+    xyCoef: 51,
+    zCoef: 12.5,
     lightIntensity: 0.9,
     ambientColor: 0x000000,
-    light1Color: 0x0E09DC,
-    light2Color: 0x1CD1E1,
-    light3Color: 0x18C02C,
-    light4Color: 0xee3bcf,
+    // Colors are now fixed to match the image
+    light1Color: 0x0E09DC, // Deep Blue/Purple
+    light2Color: 0x1CD1E1, // Cyan
+    light3Color: 0x18C02C, // Green
+    light4Color: 0xee3bcf, // Pink/Magenta
     ...conf };
 
 
-  let renderer, scene, camera, cameraCtrl;
+  let renderer, scene, camera;
   let width, height, cx, cy, wWidth, wHeight;
   const TMath = THREE.Math;
 
@@ -26,9 +27,6 @@ function App(conf) {
   const mousePlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
   const mousePosition = new THREE.Vector3();
   const raycaster = new THREE.Raycaster();
-
-  const noiseInput = document.getElementById('noiseInput');
-  const heightInput = document.getElementById('heightInput');
 
   init();
 
@@ -52,33 +50,17 @@ function App(conf) {
     });
 
     initScene();
-    initGui();
+    // initGui() call is no longer needed
     animate();
   }
 
-  function initGui() {
-    noiseInput.value = 101 - conf.xyCoef;
-    heightInput.value = conf.zCoef * 100 / 25;
-
-    noiseInput.addEventListener('input', e => {
-      conf.xyCoef = 101 - noiseInput.value;
-    });
-    heightInput.addEventListener('input', e => {
-      conf.zCoef = heightInput.value * 25 / 100;
-    });
-
-    document.getElementById('trigger').addEventListener('click', e => {
-      updateLightsColors();
-    });
-  }
+  // The initGui function is no longer needed and has been removed.
 
   function initScene() {
     scene = new THREE.Scene();
     initLights();
 
     let mat = new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-    // let mat = new THREE.MeshPhongMaterial({ color: 0xffffff });
-    // let mat = new THREE.MeshStandardMaterial({ color: 0x808080, roughness: 0.5, metalness: 0.8 });
     let geo = new THREE.PlaneBufferGeometry(wWidth, wHeight, wWidth / 2, wHeight / 2);
     plane = new THREE.Mesh(geo, mat);
     scene.add(plane);
@@ -92,9 +74,6 @@ function App(conf) {
     const r = 30;
     const y = 10;
     const lightDistance = 500;
-
-    // light = new THREE.AmbientLight(conf.ambientColor);
-    // scene.add(light);
 
     light1 = new THREE.PointLight(conf.light1Color, conf.lightIntensity, lightDistance);
     light1.position.set(0, y, r);
@@ -126,7 +105,6 @@ function App(conf) {
       gArray[i + 2] = simplex.noise4D(gArray[i] / conf.xyCoef, gArray[i + 1] / conf.xyCoef, time, mouse.x + mouse.y) * conf.zCoef;
     }
     plane.geometry.attributes.position.needsUpdate = true;
-    // plane.geometry.computeBoundingSphere();
   }
 
   function animateLights() {
@@ -142,17 +120,7 @@ function App(conf) {
     light4.position.z = Math.cos(time * 0.8) * d;
   }
 
-  function updateLightsColors() {
-    conf.light1Color = chroma.random().hex();
-    conf.light2Color = chroma.random().hex();
-    conf.light3Color = chroma.random().hex();
-    conf.light4Color = chroma.random().hex();
-    light1.color = new THREE.Color(conf.light1Color);
-    light2.color = new THREE.Color(conf.light2Color);
-    light3.color = new THREE.Color(conf.light3Color);
-    light4.color = new THREE.Color(conf.light4Color);
-    // console.log(conf);
-  }
+  // The updateLightsColors function is no longer needed and has been removed.
 
   function updateSize() {
     width = window.innerWidth;cx = width / 2;
